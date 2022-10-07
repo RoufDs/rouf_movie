@@ -18,8 +18,8 @@ function App() {
   const [data, loading, error] = useFetch()
 
   useEffect(() => {
-    
-  })
+    setMovies(data)
+  }, [data])
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/movies/", {
@@ -78,6 +78,9 @@ function App() {
   const logoutUser = () => {
     deleteToken(['mr-token'])
   }
+
+  if(loading) return <h1>Loading...</h1>
+  if(error) return <h1>Error loading movies</h1>
 
   return (
     <div className="App">
