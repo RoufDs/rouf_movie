@@ -9,19 +9,35 @@ export default function Edit(props) {
     const [description, setDescription] = useState(movie.description)
 
     const saveMovie = () => {
-        fetch(`http://192.168.1.118:8000/api/movies/${movie.id}/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
-            },
-            body: JSON.stringify({title: title, description: description})
-        })
-        .then(res => res.json())
-        .then(movie => {
-            props.navigation.navigate("Detail", {movie: movie, title: movie.title})
-        })
-        .catch(err => console.error(err))        
+        if(movie.id) {
+            fetch(`http://192.168.1.118:8000/api/movies/${movie.id}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
+                },
+                body: JSON.stringify({title: title, description: description})
+            })
+            .then(res => res.json())
+            .then(movie => {
+                props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+            })
+            .catch(err => console.error(err))
+        }else {
+            fetch(`http://192.168.1.118:8000/api/movies/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
+                },
+                body: JSON.stringify({title: title, description: description})
+                })
+            .then(res => res.json())
+            .then(movie => {
+                props.navigation.navigate("MovieList")
+            })
+            .catch(err => console.error(err))
+        }                
     }
 
     return (
@@ -40,7 +56,7 @@ export default function Edit(props) {
                 onChangeText={text => setDescription(text)}
                 value={description}
             />
-            <Button onPress={() => saveMovie()} title="Save" />
+            <Button onPress={() => saveMovie()} title={movie.id ? "Edit" : "Add"} />
         </View>
     );
 }
@@ -55,7 +71,28 @@ Edit.navigationOptions = screenProps => ({
         fontWeight: 'bold',
         fontSize: 24
     },
+    headerRight: (
+        <Button title="Remove" color="orange"
+            onPress={() => removeClicked(screenProps)}
+        />
+    )
 })
+
+const removeClicked = (props) => {
+    const movie = props.navigation.getParam('movie')
+    console.log(movie);
+    fetch(`http://192.168.1.118:8000/api/movies/${movie.id}/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
+        }
+    })    
+    .then(res => {
+        props.navigation.navigate("MovieList")
+    })
+    .catch(err => console.error(err))
+}
 
 const styles = StyleSheet.create({
     container: {

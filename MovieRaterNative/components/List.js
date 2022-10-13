@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function List(props) {
 
@@ -16,7 +16,7 @@ export default function List(props) {
     .then(res => res.json())
     .then(jsonRes => setMovies(jsonRes))
     .catch(err => console.error(err))
-  }, [])
+  })
 
   const movieclicked = (movie) => {
     props.navigation.navigate("Detail", {movie: movie, title: movie.title})
@@ -42,6 +42,23 @@ export default function List(props) {
     </View>
   );
 }
+
+List.navigationOptions = screenProps => ({
+  title: "List of movies",
+  headerStyle: {
+      backgroundColor: 'orange'
+  },
+  headerTintColor: '#fff',
+  headerTitleStyle: {
+      fontWeight: 'bold',
+      fontSize: 24
+  },
+  headerRight: (
+      <Button title="Add New" color="orange"
+          onPress={() => screenProps.navigation.navigate("Edit", {movie: {title: '', description: ''}})}
+      />
+  )
+})
 
 const styles = StyleSheet.create({
   container: {
