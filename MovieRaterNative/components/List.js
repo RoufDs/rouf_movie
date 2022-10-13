@@ -7,7 +7,7 @@ export default function List(props) {
   const [movies, setMovies] = useState([])
 
   useEffect(() => {
-    fetch('http://172.25.91.175:8000/api/movies/', {
+    fetch('http://192.168.1.118:8000/api/movies/', {
       method: 'GET',
       headers: {
         'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`

@@ -9,7 +9,19 @@ export default function Edit(props) {
     const [description, setDescription] = useState(movie.description)
 
     const saveMovie = () => {
-        props.navigation.goBack()
+        fetch(`http://192.168.1.118:8000/api/movies/${movie.id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
+            },
+            body: JSON.stringify({title: title, description: description})
+        })
+        .then(res => res.json())
+        .then(movie => {
+            props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+        })
+        .catch(err => console.error(err))        
     }
 
     return (
