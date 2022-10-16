@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -5,21 +6,35 @@ import { Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } fro
 export default function List(props) {
 
   const [movies, setMovies] = useState([])
+  let token = null
+
+  const getData = async () => {
+    token = await AsyncStorage.getItem('MR_Token')
+    if(token) {
+      getMovies()
+    }else {
+      props.navigation.navigate("Auth")
+    }
+  }
 
   useEffect(() => {
+    getData()    
+  })
+
+  const getMovies = () => {
     fetch('http://192.168.1.118:8000/api/movies/', {
       method: 'GET',
       headers: {
-        'Authorization': `Token be7620259c170ae45df8924770acdab9be02ac3d`
+        'Authorization': `Token ${token}`
       }
     })
     .then(res => res.json())
     .then(jsonRes => setMovies(jsonRes))
     .catch(err => console.error(err))
-  })
+  }
 
   const movieclicked = (movie) => {
-    props.navigation.navigate("Detail", {movie: movie, title: movie.title})
+    props.navigation.navigate("Detail", {movie: movie, title: movie.title, token: token})
   }
 
   return (
